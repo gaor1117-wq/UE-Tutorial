@@ -1,0 +1,83 @@
+---
+const baseUrl = import.meta.env.BASE_URL;
+---
+<div class="relative min-h-[80vh] flex flex-col items-center justify-center overflow-hidden border-b border-ue-border py-20">
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-ue-accent/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
+
+  <div class="z-10 text-center mb-12 scroll-animate in-view">
+    <h1 class="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500 mb-4 tracking-tight">
+      掌握 <span class="text-ue-accent text-glow">Unreal Engine</span>
+    </h1>
+    <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-8">
+      底层逻辑 / 工程规范 / 光影渲染 / 高级视效
+    </p>
+    
+    <div class="glass inline-flex p-1 rounded-lg gap-1 mb-8">
+      <button class="layout-btn active px-4 py-1.5 text-sm rounded hover:text-white transition-colors" data-layout="grid">网格矩阵</button>
+      <button class="layout-btn px-4 py-1.5 text-sm rounded hover:text-white transition-colors" data-layout="float">横向漂浮</button>
+      <button class="layout-btn px-4 py-1.5 text-sm rounded hover:text-white transition-colors" data-layout="circle">环形聚焦</button>
+    </div>
+  </div>
+
+  <div id="hero-showcase" class="w-full max-w-5xl mx-auto relative z-10 transition-all duration-700 layout-grid h-[400px]">
+    {['界面与视窗', '工程初始化', '三大资产', '材质调整', '灯光搭建', '渲染与出图'].map((title, i) => (
+      <div class="hero-card glass w-48 h-64 rounded-xl p-4 flex flex-col justify-end absolute transition-all duration-700 ease-out group hover:border-ue-accent/50" data-index={i}>
+        <div class="w-8 h-8 rounded bg-ue-accent/20 mb-auto flex items-center justify-center text-ue-accent group-hover:scale-110 transition-transform">✦</div>
+        <div class="text-white font-bold text-sm">{title}</div>
+        <div class="text-xs text-gray-500 mt-1">系统化探索引擎奥秘</div>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .text-glow { text-shadow: 0 0 20px rgba(0, 229, 255, 0.6); }
+  .layout-btn.active { @apply bg-ue-accent/20 text-ue-accent border border-ue-accent/30; }
+
+  .layout-grid { @apply flex flex-wrap justify-center gap-6; }
+  .layout-grid .hero-card { position: relative; transform: none !important; }
+
+  .layout-float { @apply flex justify-center gap-4 items-center; }
+  .layout-float .hero-card { position: relative; transform: none !important; animation: float 6s ease-in-out infinite; }
+  .layout-float .hero-card:nth-child(2n) { animation-delay: 1s; }
+  .layout-float .hero-card:nth-child(3n) { animation-delay: 2s; }
+
+  .layout-circle { @apply flex items-center justify-center; }
+  .layout-circle .hero-card { 
+    position: absolute; 
+    left: 50%; top: 50%;
+    margin-left: -6rem; margin-top: -8rem;
+  }
+</style>
+
+<script>
+  const btns = document.querySelectorAll('.layout-btn');
+  const showcase = document.getElementById('hero-showcase');
+  const cards = document.querySelectorAll('.hero-card');
+
+  function updateLayout(layout: string) {
+    if(!showcase) return;
+    showcase.className = `w-full max-w-5xl mx-auto relative z-10 transition-all duration-700 h-[400px] layout-${layout}`;
+    
+    if (layout === 'circle') {
+      const radius = 220;
+      cards.forEach((card: any, index) => {
+        const angle = (index / cards.length) * Math.PI * 2;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
+        card.style.transform = `translate(${x}px, ${y}px)`;
+      });
+    } else {
+      cards.forEach((card: any) => { card.style.transform = ''; });
+    }
+  }
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      btns.forEach(b => b.classList.remove('active'));
+      const target = e.currentTarget as HTMLElement;
+      target.classList.add('active');
+      updateLayout(target.dataset.layout || 'grid');
+    });
+  });
+</script>

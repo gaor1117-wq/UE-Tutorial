@@ -1,0 +1,36 @@
+---
+const { bvid, page = 1, t = 0 } = Astro.props;
+---
+<div class="bili-player-container w-full aspect-video glass rounded-lg overflow-hidden relative group cursor-pointer" data-bvid={bvid} data-p={page} data-t={t}>
+  <div class="absolute inset-0 bg-ue-dark flex flex-col items-center justify-center z-10 transition-opacity duration-300" id={`cover-${bvid}`}>
+    <div class="w-16 h-16 rounded-full bg-ue-accent/20 flex items-center justify-center border border-ue-accent/50 group-hover:scale-110 group-hover:bg-ue-accent/40 transition-all">
+      <div class="w-0 h-0 border-t-8 border-t-transparent border-l-[16px] border-l-ue-accent border-b-8 border-b-transparent ml-1"></div>
+    </div>
+    <span class="mt-4 text-sm text-gray-400">点击加载 Bilibili 播放器</span>
+  </div>
+  <div id={`player-${bvid}`} class="w-full h-full"></div>
+</div>
+
+<script>
+  const containers = document.querySelectorAll('.bili-player-container');
+  containers.forEach(container => {
+    container.addEventListener('click', function() {
+      const bvid = this.getAttribute('data-bvid');
+      const p = this.getAttribute('data-p');
+      const t = this.getAttribute('data-t');
+      
+      if (!bvid) return; // 如果没有bvid则不加载
+
+      const cover = this.querySelector(`#cover-${bvid}`);
+      const playerDiv = this.querySelector(`#player-${bvid}`);
+      
+      if (cover) cover.classList.add('opacity-0', 'pointer-events-none');
+      
+      if (playerDiv && !playerDiv.innerHTML.trim()) {
+        playerDiv.innerHTML = `<iframe src="//player.bilibili.com/player.html?bvid=${bvid}&page=${p}&t=${t}&autoplay=1&high_quality=1&danmaku=0" 
+                                scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" 
+                                class="w-full h-full"></iframe>`;
+      }
+    });
+  });
+</script>

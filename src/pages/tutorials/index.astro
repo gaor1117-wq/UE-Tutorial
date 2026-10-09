@@ -1,0 +1,26 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import TutorialCard from '../../components/TutorialCard.astro';
+import { getCollection } from 'astro:content';
+
+const tutorials = await getCollection('tutorials');
+const baseUrl = import.meta.env.BASE_URL;
+---
+
+<Layout title="教程">
+  <div class="max-w-7xl mx-auto px-6 py-12">
+    <div class="flex items-end justify-between mb-8">
+      <div>
+        <h1 class="text-4xl font-black text-white">教程</h1>
+        <p class="text-gray-400 mt-2">课后随时查阅的知识库</p>
+      </div>
+      <a class="text-ue-accent text-sm hover:underline" href={`${baseUrl}/effects`}>按效果查找 →</a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {tutorials
+        .sort((a, b) => (b.data.updatedAt || '').localeCompare(a.data.updatedAt || ''))
+        .map(t => <TutorialCard tutorial={t} />)}
+    </div>
+  </div>
+</Layout>

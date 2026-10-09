@@ -1,0 +1,91 @@
+---
+import shortcuts from '../data/shortcuts.json';
+---
+<div id="shortcut-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+  <div class="glass w-full max-w-lg rounded-xl p-6 relative transform scale-95 transition-transform duration-300 flex flex-col max-h-[80vh]" id="modal-content">
+    <button id="close-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white">✕</button>
+    <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2 shrink-0">
+      <span class="text-ue-accent">⌨</span> 快捷键指南
+    </h2>
+    <input type="text" id="shortcut-search" placeholder="搜索快捷键、功能或口诀..." class="w-full bg-ue-dark border border-ue-border rounded px-4 py-2 mb-4 text-sm text-white focus:outline-none focus:border-ue-accent shrink-0" />
+    
+    <div class="overflow-y-auto pr-2 flex-grow" id="shortcut-list">
+      {shortcuts.map(group => (
+        <div class="shortcut-group mb-6">
+          <h3 class="text-sm font-bold text-ue-accent mb-2 border-b border-ue-border/50 pb-1">{group.group}</h3>
+          <div class="space-y-1">
+            {group.items.map(item => (
+              <div class="flex justify-between items-center py-2 border-b border-ue-border/30 shortcut-item" data-action={item.action.toLowerCase()} data-keys={item.keys.toLowerCase()} data-note={item.note.toLowerCase()}>
+                <div class="flex flex-col">
+                  <span class="text-gray-300 text-sm">{item.action}</span>
+                  <span class="text-gray-500 text-[10px]">{item.note}</span>
+                </div>
+                <kbd class="bg-ue-dark border border-ue-border px-2 py-1 rounded text-xs text-ue-accent font-mono ml-4 text-right">{item.keys}</kbd>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+<script>
+  const modal = document.getElementById('shortcut-modal');
+  const content = document.getElementById('modal-content');
+  const closeBtn = document.getElementById('close-modal');
+  const search = document.getElementById('shortcut-search') as HTMLInputElement;
+  const groups = document.querySelectorAll('.shortcut-group');
+  const helpTriggers = document.querySelectorAll('.trigger-help');
+
+  function toggleModal(force?: boolean) {
+    const isHidden = modal?.classList.contains('hidden');
+    const show = force !== undefined ? force : isHidden;
+    
+    if (show) {
+      modal?.classList.remove('hidden');
+      void modal?.offsetWidth; // trigger reflow
+      modal?.classList.remove('opacity-0');
+      content?.classList.remove('scale-95');
+      search?.focus();
+    } else {
+      modal?.classList.add('opacity-0');
+      content?.classList.add('scale-95');
+      setTimeout(() => modal?.classList.add('hidden'), 300);
+    }
+  }
+
+  closeBtn?.addEventListener('click', () => toggleModal(false));
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) toggleModal(false);
+  });
+
+  helpTriggers.forEach(btn => btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    toggleModal(true);
+  }));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === '?' && document.activeElement?.tagName !== 'INPUT') {
+      toggleModal();
+    }
+    if (e.key === 'Escape') toggleModal(false);
+  });
+
+  search?.addEventListener('input', (e) => {
+    const term = (e.target as HTMLInputElement).value.toLowerCase();
+    
+    groups.forEach((group: any) => {
+      const items = group.querySelectorAll('.shortcut-item');
+      let visibleCount = 0;
+      
+      items.forEach((item: any) => {
+        const match = item.dataset.action.includes(term) || item.dataset.keys.includes(term) || item.dataset.note.includes(term);
+        item.style.display = match ? 'flex' : 'none';
+        if (match) visibleCount++;
+      });
+      
+      group.style.display = visibleCount === 0 ? 'none' : 'block';
+    });
+  });
+</script>

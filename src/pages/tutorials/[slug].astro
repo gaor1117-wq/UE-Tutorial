@@ -1,0 +1,47 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const tutorials = await getCollection('tutorials');
+  return tutorials.map((t) => ({
+    params: { slug: t.slug },
+    props: { tutorial: t },
+  }));
+}
+
+const { tutorial } = Astro.props;
+const { Content, headings } = await tutorial.render();
+const { data } = tutorial;
+---
+
+<Layout title={data.title}>
+  <div class="max-w-7xl mx-auto px-6 py-12 flex flex-col lg:flex-row gap-10">
+    <article class="lg:w-3/4 w-full">
+      <div class="mb-8">
+        <div class="text-sm text-gray-400 mb-3">
+          {data.category || '教程'} · {data.level || '—'} · {data.ueVersion || '—'}
+        </div>
+        <h1 class="text-4xl font-black text-white mb-4">{data.title}</h1>
+        <p class="text-gray-300 glass p-4 rounded-xl border border-ue-border">{data.summary}</p>
+      </div>
+
+      <div class="prose prose-invert max-w-none">
+        <Content />
+      </div>
+    </article>
+
+    <aside class="lg:w-1/4 w-full">
+      <div class="glass p-5 rounded-xl sticky top-24 border border-ue-border">
+        <div class="text-white font-bold mb-3">目录</div>
+        <ul class="space-y-2 text-sm">
+          {headings.map((h) => (
+            <li style={`padding-left:${(h.depth - 1) * 12}px`}>
+              <a class="text-gray-400 hover:text-ue-accent" href={`#${h.slug}`}>{h.text}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </aside>
+  </div>
+</Layout>

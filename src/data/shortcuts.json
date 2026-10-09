@@ -1,0 +1,25 @@
+[
+  {
+    "group": "视窗与移动",
+    "items": [
+      { "keys": "鼠标右键 + 拖拽", "action": "原地旋转视角", "note": "转头" },
+      { "keys": "鼠标中键 + 拖拽", "action": "同角度平移", "note": "平移" },
+      { "keys": "W / S / A / D", "action": "前 / 后 / 左 / 右 移动", "note": "和游戏一致" },
+      { "keys": "E / Q", "action": "上升 / 下降", "note": "跳 / 蹲" },
+      { "keys": "Ctrl + 1 / 2 / 3 / 4", "action": "给当前视角存书签，镜头跑丢一键切回", "note": "仅当前地图有效" },
+      { "keys": "F", "action": "快速定位到选中物体", "note": "Find" },
+      { "keys": "G", "action": "隐藏所有辅助物体（灯光、相机图标），干净预览模型", "note": "隐藏辅助" },
+      { "keys": "Ctrl + 鼠标左键", "action": "取消已选中的物体（反选）", "note": "少选" }
+    ]
+  },
+  {
+    "group": "选择与编辑",
+    "items": [
+      { "keys": "鼠标左键单击", "action": "选择物体（黄色高亮）", "note": "选中" },
+      { "keys": "Shift + 单击", "action": "多选", "note": "加选" },
+      { "keys": "Ctrl + C / Ctrl + V", "action": "复制 / 粘贴（材质球、地图等资产）", "note": "通用" },
+      { "keys": "双击材质球", "action": "打开材质编辑器", "note": "改材质" },
+      { "keys": "Ctrl + Shift + D", "action": "选中组下所有后代子物体", "note": "全选子件" }
+    ]
+  }
+]

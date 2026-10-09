@@ -1,0 +1,80 @@
+---
+import '../styles/global.css';
+import ShortcutModal from '../components/ShortcutModal.astro';
+
+const { title = 'UE Tutorial' } = Astro.props;
+
+const navItems = [
+  { name: '首页', path: '/' },
+  { name: '概览', path: '/overview' },
+  { name: '教程', path: '/tutorials' },
+  { name: '特效', path: '/effects' },
+  { name: '新手路线', path: '/path/beginner' },
+  { name: '关于', path: '/overview' }
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>{title}</title>
+  </head>
+
+  <body class="min-h-screen flex flex-col">
+    <nav class="glass fixed top-0 w-full z-40 border-b border-ue-border/40">
+      <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <a href="/" class="text-xl font-black text-white flex items-center gap-2 tracking-wider">
+          <span class="w-5 h-5 bg-ue-accent rounded-sm shadow-[0_0_10px_rgba(0,229,255,0.7)]"></span>
+          UE TUTORIAL
+        </a>
+
+        <div class="hidden md:flex items-center gap-6">
+          {navItems.map((item) => (
+            <a
+              href={item.path}
+              class="text-sm font-medium text-gray-400 hover:text-ue-accent transition-colors"
+            >
+              {item.name}
+            </a>
+          ))}
+
+          <div class="w-px h-5 bg-white/10 mx-2"></div>
+
+          <button
+            class="trigger-help text-sm font-medium text-gray-400 hover:text-white flex items-center gap-2 transition-colors"
+            type="button"
+          >
+            帮助
+            <kbd class="px-1.5 py-0.5 bg-black/30 rounded text-[10px] border border-white/10">?</kbd>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main class="flex-grow pt-16">
+      <slot />
+    </main>
+
+    <footer class="border-t border-white/10 py-8 mt-20">
+      <div class="max-w-7xl mx-auto px-6 text-center text-sm text-gray-500">
+        © {new Date().getFullYear()} UE Tutorial. Digital Dark Style.
+      </div>
+    </footer>
+
+    <ShortcutModal />
+
+    <script>
+      // 给页面里标记了 .scroll-animate 的元素加进入动画 class
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) entry.target.classList.add('in-view');
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.scroll-animate').forEach((el) => observer.observe(el));
+    </script>
+  </body>
+</html>

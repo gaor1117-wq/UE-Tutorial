@@ -1,0 +1,51 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const tutorials = await getCollection('tutorials');
+const beginnerTuts = tutorials.filter(t => t.data.path === 'beginner');
+
+const chapters = beginnerTuts.reduce((acc, tut) => {
+  const chap = tut.data.chapter || '未分类';
+  if (!acc[chap]) acc[chap] = [];
+  acc[chap].push(tut);
+  return acc;
+}, {} as Record<string, typeof beginnerTuts>);
+
+Object.keys(chapters).forEach(k => {
+  chapters[k].sort((a, b) => (a.data.order || 99) - (b.data.order || 99));
+});
+const baseUrl = import.meta.env.BASE_URL;
+---
+
+<Layout title="新手学习路线">
+  <div class="max-w-4xl mx-auto px-6 py-12">
+    <div class="mb-16 border-b border-ue-border pb-8 scroll-animate">
+      <h1 class="text-4xl font-black text-white mb-4">🔰 新手入门路线</h1>
+      <p class="text-gray-400">跟随精心编排的内部课程，从零开始掌握虚幻引擎核心工作流。</p>
+    </div>
+
+    <div class="relative border-l-2 border-ue-border/50 ml-4 md:ml-0 space-y-12">
+      {Object.entries(chapters).map(([chapName, tuts]) => (
+        <div class="relative pl-8 md:pl-10 scroll-animate">
+          <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-ue-dark border-2 border-ue-accent shadow-[0_0_10px_rgba(0,229,255,0.5)]"></div>
+          <h2 class="text-2xl font-bold text-ue-accent mb-6">{chapName}</h2>
+          
+          <div class="space-y-4">
+            {tuts.map(tut => (
+              <a href={`${baseUrl}/tutorials/${tut.slug}`} class="glass block p-4 rounded-lg group hover:border-ue-accent/50 transition-colors flex gap-4 items-center">
+                <div class="w-10 h-10 shrink-0 rounded bg-ue-dark flex items-center justify-center text-gray-500 font-mono text-sm group-hover:text-ue-accent border border-ue-border">
+                  {tut.data.order}
+                </div>
+                <div>
+                  <h3 class="text-white font-medium group-hover:text-ue-accent transition-colors">{tut.data.title}</h3>
+                  <p class="text-xs text-gray-400 mt-1 line-clamp-1">{tut.data.summary}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</Layout>

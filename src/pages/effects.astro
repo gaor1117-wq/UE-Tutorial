@@ -1,0 +1,31 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const tutorials = await getCollection('tutorials');
+const effectsSet = new Set<string>();
+tutorials.forEach(t => t.data.effects.forEach(e => effectsSet.add(e)));
+const effects = Array.from(effectsSet);
+const baseUrl = import.meta.env.BASE_URL;
+---
+
+<Layout title="知识点/特效集">
+  <div class="max-w-7xl mx-auto px-6 py-12">
+    <div class="text-center mb-16 scroll-animate">
+      <h1 class="text-4xl font-black text-white mb-4">知识点索引</h1>
+      <p class="text-gray-400">快速定位你需要学习的具体操作与视效表现</p>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      {effects.map(effect => (
+        <a href={`${baseUrl}/tutorials?effect=${encodeURIComponent(effect)}`} 
+           class="glass aspect-square rounded-xl flex flex-col items-center justify-center p-4 group hover:bg-ue-accent/10 transition-colors scroll-animate">
+          <div class="w-12 h-12 rounded-full border-2 border-ue-border mb-4 flex items-center justify-center group-hover:border-ue-accent group-hover:shadow-[0_0_15px_rgba(0,229,255,0.5)] transition-all">
+            ✨
+          </div>
+          <span class="text-white font-medium text-center text-sm">{effect}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</Layout>
